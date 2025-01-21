@@ -1,0 +1,13 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.KingChats" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:background">@color/Verde_Profundo</item>
+        <item name="colorPrimary">@color/Verde_Forte</item>
+        <item name="android:titleTextColor">@color/Verde_Limao</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
+    <style name="Theme.KingChats" parent="Base.Theme.KingChats" />
+</resources>

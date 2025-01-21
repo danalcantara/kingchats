@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="Verde_Profundo">#152614</color>
+    <color name="Verde_Forte">#1E441E</color>
+    <color name="Verde_Medio">#2A7221</color>
+    <color name="Verde_Leve">#119822</color>
+    <color name="Verde_Limao">#31CB00</color>
+
+</resources>

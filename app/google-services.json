@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "3843468828",
+    "project_id": "aulakingchat",
+    "storage_bucket": "aulakingchat.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3843468828:android:4c4df4e5c61c6c20abf9d9",
+        "android_client_info": {
+          "package_name": "com.doublevision.kingchats"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_g4ZJkQr6QEcsYqyFeX1SRDUl8CKRH-o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
