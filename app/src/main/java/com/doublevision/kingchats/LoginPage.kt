@@ -8,16 +8,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import com.airbnb.lottie.LottieAnimationView
 import com.doublevision.kingchats.databinding.ActivityLoginPageBinding
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlin.concurrent.thread
+import kotlinx.coroutines.suspendCancellableCoroutine
+
+import kotlin.coroutines.resume
 
 class LoginPage : AppCompatActivity() {
     val binding by lazy {
@@ -29,12 +27,21 @@ class LoginPage : AppCompatActivity() {
     val context by lazy {
         this
     }
+    val loadingAnimation by lazy { findViewById<LottieAnimationView>(R.id.animationLoadingLogin) }
+    val cardOfAnimation by lazy { binding.loadindCard }
     override fun onStart() {
         super.onStart()
         if (firebaseauth.currentUser != null) {
             startActivity(Intent(this, MainActivity::class.java))
+        } else {
+            if (binding.inputEmailLogin.text.toString().isNotEmpty())
+            binding.inputEmailLogin.text?.clear()
         }
+        if (binding.inputPasswordLogin.text.toString().isNotEmpty())
+            binding.inputPasswordLogin.text?.clear()
     }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -50,39 +57,51 @@ class LoginPage : AppCompatActivity() {
 
     fun loginAccount(view: View) {
 
-        var controller = false
-        GlobalScope.launch {
-            launch {
-                controller = logarAccount()
-                withContext(Dispatchers.Main) {
-                    if (controller) {
-                        startActivity(Intent(context, MainActivity::class.java))
-                    } else {
-                        Toast.makeText(context, "Erro ao fazer login", Toast.LENGTH_SHORT).show()
-                    }
-                }
+
+        onAnimationLoading()
+        lifecycleScope.launch {
+            var usuario_id = logarUsuarioNoApp()
+
+            if (usuario_id != null) {
+                offAnimationLoading()
+                startActivity(Intent(context, MainActivity::class.java))
+            } else {
+                offAnimationLoading()
+                Toast.makeText(context, "Erro ao fazer login", Toast.LENGTH_SHORT).show()
+
             }
-//Sempre da erro de login e demora muito
         }
 
-
-    }
-suspend fun logarAccount(): Boolean{
-    var acc = false
-    try {
-    firebaseauth.signInWithEmailAndPassword(
-        binding.inputEmailLogin.text.toString(),
-        binding.inputPasswordLogin.text.toString()
-    ).addOnSuccessListener {
-        acc = true
     }
 
-} catch (e:Exception){
+    fun onAnimationLoading() {
+        cardOfAnimation?.visibility = View.VISIBLE
+        loadingAnimation.playAnimation()
+
+    }
+
+    fun offAnimationLoading() {
+        loadingAnimation.pauseAnimation()
+        cardOfAnimation?.visibility = View.INVISIBLE
+
+    }
+
+    private suspend fun logarUsuarioNoApp(): String? = suspendCancellableCoroutine { continuation ->
+        try {
+            firebaseauth.signInWithEmailAndPassword(
+                binding.inputEmailLogin.text.toString(),
+                binding.inputPasswordLogin.text.toString()
+            ).addOnSuccessListener { user ->
+                continuation.resume(user.user?.uid)
+            }.addOnFailureListener {
+                continuation.resume(null)
+            }
+        } catch (e: Exception) {
             e.printStackTrace()
-            return acc
+            continuation.resumeWith(Result.failure(e))
         }
-    return acc
-}
+    }
+
 
     fun navigationToRegister(view: View) {
         startActivity(

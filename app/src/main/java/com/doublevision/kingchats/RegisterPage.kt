@@ -2,34 +2,53 @@ package com.doublevision.kingchats
 
 import android.content.Intent
 import android.os.Bundle
+
 import android.view.View
+import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import com.airbnb.lottie.LottieAnimationView
 import com.doublevision.kingchats.databinding.ActivityRegisterPageBinding
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
+
 import com.google.firebase.firestore.FirebaseFirestore
 
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.concurrent.CancellationException
+import java.util.concurrent.TimeUnit
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+
 class RegisterPage : AppCompatActivity() {
-    val binding by lazy{
+    val binding by lazy {
         ActivityRegisterPageBinding.inflate(layoutInflater)
     }
-    val nome: String by lazy {binding.inputName?.text.toString()}
-    val email:String  by lazy {binding.inputMail.text.toString()}
-    val senha:String  by lazy {binding.inputPasswordRegister?.text.toString()}
-    val senhaConfirm:String  by lazy {binding.confirmPassword?.text.toString()}
+
     val firebaseauth by lazy {
         FirebaseAuth.getInstance()
     }
     val firebasestore by lazy {
         FirebaseFirestore.getInstance()
     }
+    val context by lazy {
+        this
+    }
+    var verificationId: String? = null
 
+    val loadingAnimation by lazy { findViewById<LottieAnimationView>(R.id.animationLoadingRegister) }
+    val cardOfAnimation by lazy { binding.loadindCardRegister }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,46 +61,115 @@ class RegisterPage : AppCompatActivity() {
         }
         toolbarInitializer(binding.toolbar)
     }
-    fun RegisterUser(view: View){
-        if (validateDataUser()){
-            firebaseauth.createUserWithEmailAndPassword(email, senha).addOnSuccessListener { user ->
-                ShowMessage(binding.root, "Usuario foi Criado")
-                var uid = firebaseauth.currentUser?.uid
-                if (uid != null) {
+private fun unableFildsAndButtons(){
+    binding.containerNome.isEnabled = false
+    binding.containerSenha1.isEnabled = false
+    binding.containerSenha2.isEnabled = false
+    binding.mailContainer.isEnabled = false
+    binding.btnRegister.isEnabled = false
+    binding.toolbar.isEnabled =false
 
-                    firebasestore.collection("Users").document(uid).set( mapOf("Nome" to nome, "Email" to email)).addOnSuccessListener {
-                        startActivity(Intent(this, MainActivity::class.java))
-                    }.addOnFailureListener {
+}
+    private fun enableFildsAndButtons(){
+        binding.containerNome.isEnabled = true
+        binding.containerSenha1.isEnabled = true
+        binding.containerSenha2.isEnabled = true
+        binding.mailContainer.isEnabled = true
+        binding.btnRegister.isEnabled = true
+}
+    fun RegisterUser(view: View) {
+        onAnimationLoading()
+        unableFildsAndButtons()
+        if (validateDataUser()) {
+        lifecycleScope.launch {
+
+                var id = processRegister()
+                if (id != null) {
+
+
+                    var condititionSetDB = setUserInDataBase(id)
+                    if (condititionSetDB) {
+                        ShowMessage(binding.root, "EStranho mano")
+                        offAnimationLoading()
+                        startActivity(Intent(context, MainActivity::class.java))
+                    } else {
+
+                        offAnimationLoading()
+                        enableFildsAndButtons()
                         binding.errorLogin?.visibility = View.VISIBLE
                         ShowMessage(binding.root, "Deu Ruim")
-                    }
 
                 }
-                }.addOnFailureListener { erro ->
-                try {
-                    throw erro
-                } catch (e: FirebaseAuthUserCollisionException){
-                    ShowMessage(binding.root ,"Ja existe esse email cadastrado no aplicativo ")
-                }catch (e: FirebaseAuthInvalidCredentialsException){
-                    ShowMessage(binding.root ,"Email invalido digite outro")
-                }catch (e: FirebaseAuthWeakPasswordException){
-                    ShowMessage(binding.root ,"Senha muito fraca tente uma mais forte")
                 }
             }
+
+        } else {
+            offAnimationLoading()
+            enableFildsAndButtons()
+            binding.errorLogin?.visibility = View.VISIBLE
+            ShowMessage(binding.root, "Valores invalidos")
         }
     }
 
+    private suspend fun processRegister(): String? = suspendCancellableCoroutine { continuation ->
+        try {
+
+            val email = binding.inputMail.text.toString()
+            val senha = binding.inputPasswordRegister.text.toString()
+            firebaseauth.createUserWithEmailAndPassword(email, senha).addOnSuccessListener { user ->
+                ShowMessage(binding.root, "Usuario foi Criado")
+                continuation.resume(user.user?.uid)
+            }.addOnFailureListener {
+                continuation.resume(null)
+            }
+        } catch (e: Exception) {
+            continuation.resumeWith(Result.failure(e))
+        }
+    }
+
+    private suspend fun setUserInDataBase(id: String): Boolean = suspendCancellableCoroutine {
+        val nome = binding.inputName.text.toString()
+        val email = binding.inputMail.text.toString()
+        firebasestore.collection("Users").document(id)
+            .set(mapOf("id" to id, "Nome" to nome, "Email" to email))
+            .addOnSuccessListener { sucess ->
+                it.resume(true)
+            }.addOnFailureListener { failure ->
+            it.resume(false)
+
+        }
+    }
+
+    fun onAnimationLoading() {
+        cardOfAnimation?.visibility = View.VISIBLE
+        loadingAnimation.playAnimation()
+
+    }
+
+    fun offAnimationLoading() {
+        loadingAnimation.pauseAnimation()
+        cardOfAnimation?.visibility = View.INVISIBLE
+
+    }
+
     private fun validateDataUser(): Boolean {
+        val nome = binding.inputName.text.toString()
+        val email = binding.inputMail.text.toString()
+        val senha = binding.inputPasswordRegister.text.toString()
+        val confirmSenha = binding.confirmPassword.text.toString()
         if (nome.length > 4) {
+
             if (email.length > 10) {
-                if (senha.length > 5 ){
-                    if (senha.equals(senhaConfirm)){
+
+                if (senha.length > 5) {
+
+                    if (senha.equals(confirmSenha)) {
                         return true
-                    } else{
+                    } else {
                         binding.confirmPassword?.error = "Não é igual"
-                        ShowMessage(binding.root ,"Senha incompativel")
+                        ShowMessage(binding.root, "Senha incompativel")
                     }
-                } else{
+                } else {
                     binding.inputPasswordRegister?.error = "Senha invalida"
                 }
             } else {
@@ -93,7 +181,7 @@ class RegisterPage : AppCompatActivity() {
             binding.inputName?.error = "Nome deve ser acima de 4 digitos"
         }
 
-            return false
+        return false
     }
 
     fun toolbarInitializer(tool: MaterialToolbar) {
@@ -102,5 +190,6 @@ class RegisterPage : AppCompatActivity() {
             title = "Register"
             setDisplayHomeAsUpEnabled(true)
         }
+
     }
 }

@@ -12,7 +12,7 @@
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/Verde_Forte"
+        android:background="?attr/colorPrimary"
         android:backgroundTintMode="add"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
@@ -31,6 +31,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:srcCompat="@drawable/logo" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputPhone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="1dp"
+        app:boxBackgroundColor="#F6F6F6"
+        app:boxStrokeColor="@color/Verde_Forte"
+        app:layout_constraintEnd_toEndOf="@+id/containerSenha2"
+        app:layout_constraintStart_toStartOf="@+id/containerSenha2"
+        app:layout_constraintTop_toBottomOf="@+id/containerSenha2"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/containerNome"
@@ -56,7 +67,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
+        android:id="@+id/mailContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -76,6 +87,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:drawableStart="@drawable/ico_mail" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -86,10 +98,10 @@
         android:padding="1dp"
         app:boxBackgroundColor="#F6F6F6"
         app:boxStrokeColor="@color/Verde_Forte"
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout"
+        app:layout_constraintEnd_toEndOf="@+id/mailContainer"
         app:layout_constraintHorizontal_bias="0.333"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
+        app:layout_constraintStart_toStartOf="@+id/mailContainer"
+        app:layout_constraintTop_toBottomOf="@+id/mailContainer">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/inputPasswordRegister"
@@ -109,9 +121,9 @@
         android:padding="1dp"
         app:boxBackgroundColor="#F6F6F6"
         app:boxStrokeColor="@color/Verde_Forte"
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout"
+        app:layout_constraintEnd_toEndOf="@+id/mailContainer"
         app:layout_constraintHorizontal_bias="0.666"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout"
+        app:layout_constraintStart_toStartOf="@+id/mailContainer"
         app:layout_constraintTop_toBottomOf="@+id/containerSenha1">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -128,26 +140,63 @@
         android:id="@+id/btnRegister"
         android:layout_width="0dp"
         android:layout_height="55dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="24dp"
         android:onClick="RegisterUser"
         android:text="Register"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/containerSenha2"
         app:layout_constraintStart_toStartOf="@+id/containerSenha2"
-        app:layout_constraintTop_toBottomOf="@+id/containerSenha2" />
+        app:layout_constraintTop_toBottomOf="@+id/inputPhone" />
 
     <TextView
         android:id="@+id/errorLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Maintance"
+        android:text="Preencha Corretamente..."
         android:textColor="#C90606"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/btnRegister"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/containerSenha2"
-    app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintTop_toBottomOf="@+id/containerSenha2"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/loadindCardRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="67dp"
+        android:layout_marginEnd="66dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5"
+        tools:visibility="gone">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animationLoadingRegister"
+                android:layout_width="278dp"
+                android:layout_height="250dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                app:lottie_autoPlay="false"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/loading_animation"
+                tools:ignore="MissingConstraints" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

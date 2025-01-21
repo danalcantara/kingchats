@@ -13,6 +13,9 @@
         android:theme="@style/Theme.KingChats"
         tools:targetApi="31">
         <activity
+            android:name=".Profile"
+            android:exported="false" />
+        <activity
             android:name=".RegisterPage"
             android:exported="false"
             android:parentActivityName=".LoginPage" />
