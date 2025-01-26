@@ -1,35 +1,27 @@
-package com.doublevision.kingchats
+package com.doublevision.kingchats.Activitys
 
 import android.content.Intent
 import android.os.Bundle
 
 import android.view.View
-import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieAnimationView
+import com.doublevision.kingchats.R
+import com.doublevision.kingchats.Util.ShowMessage
 import com.doublevision.kingchats.databinding.ActivityRegisterPageBinding
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthOptions
-import com.google.firebase.auth.PhoneAuthProvider
 
 import com.google.firebase.firestore.FirebaseFirestore
 
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import java.util.concurrent.CancellationException
-import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 class RegisterPage : AppCompatActivity() {
     val binding by lazy {

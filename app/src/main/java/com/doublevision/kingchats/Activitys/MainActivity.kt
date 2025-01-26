@@ -1,19 +1,21 @@
-package com.doublevision.kingchats
+package com.doublevision.kingchats.Activitys
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.doublevision.kingchats.Adapters.viewPagerAdapter
+import com.doublevision.kingchats.R
 import com.doublevision.kingchats.databinding.ActivityMainBinding
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         toolbarInitializer(binding.toolbarlogin)
+        tabNavigationInitializer()
     }
 
     fun deslogarUser() {
@@ -56,12 +59,27 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                    when (menuItem.itemId){
-                       R.id.logoutapp-> deslogarUser()
+                       R.id.profile -> navigateToProfile()
+                       R.id.logoutapp -> deslogarUser()
                    }
                     return true
                 }
 
             }
         )
+    }
+    fun navigateToProfile(){
+        startActivity(Intent(this, Profile::class.java))
+    }
+    fun tabNavigationInitializer(){
+        var abas = listOf<String>("Conversas", "Contato")
+            var tabhost = binding.tabLayout
+            var pager = binding.viewPagerPrincipal //
+
+        tabhost.isTabIndicatorFullWidth = true //indicador ter o tamanho inteiro da aba selecionada
+        pager.adapter = viewPagerAdapter(abas,supportFragmentManager, lifecycle)
+        TabLayoutMediator(tabhost, pager){aba,posicao ->
+            aba.text = abas[posicao]
+        }.attach()
     }
 }

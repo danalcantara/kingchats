@@ -1,5 +1,6 @@
-package com.doublevision.kingchats
+package com.doublevision.kingchats.Activitys
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieAnimationView
+import com.doublevision.kingchats.R
 import com.doublevision.kingchats.databinding.ActivityLoginPageBinding
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
@@ -29,6 +31,7 @@ class LoginPage : AppCompatActivity() {
     }
     val loadingAnimation by lazy { findViewById<LottieAnimationView>(R.id.animationLoadingLogin) }
     val cardOfAnimation by lazy { binding.loadindCard }
+    @SuppressLint("SuspiciousIndentation")
     override fun onStart() {
         super.onStart()
         if (firebaseauth.currentUser != null) {

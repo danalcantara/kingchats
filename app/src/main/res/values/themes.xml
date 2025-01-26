@@ -10,5 +10,9 @@
         <item name="android:popupBackground">@color/Verde_Limao</item>
     </style>
 
+    <style name="Circle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">30%</item>
+    </style>
     <style name="Theme.KingChats" parent="Base.Theme.KingChats" />
 </resources>

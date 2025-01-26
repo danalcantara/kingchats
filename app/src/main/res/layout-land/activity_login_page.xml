@@ -14,7 +14,7 @@
         android:id="@+id/contrait_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".LoginPage">
+        tools:context=".Activitys.LoginPage">
 
         <androidx.constraintlayout.widget.Group
             android:layout_width="wrap_content"
